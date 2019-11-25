@@ -13,4 +13,3 @@ Run `npm install` and `npm start` for a dev server. Navigate to `http://localhos
 In development mode, run `ng serve` or `ng build` command.
 
 For production mode, run `ng build --prod` command.# financialhouseapp
-# financialhouseapp
