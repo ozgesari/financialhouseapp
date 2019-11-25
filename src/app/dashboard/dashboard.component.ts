@@ -8,6 +8,9 @@ import { Observable } from 'rxjs';
 })
 export class DashboardComponent implements OnInit {
 
+  public transactionIdForTransactionSearch: string;
+  public transactionIdForClientSearch: string;
+
   constructor() { }
 
   ngOnInit() {
