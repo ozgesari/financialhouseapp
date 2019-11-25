@@ -14,4 +14,3 @@ In development mode, run `ng serve` or `ng build` command.
 
 For production mode, run `ng build --prod` command.# financialhouseapp
 # financialhouseapp
-# financialhouseapp
