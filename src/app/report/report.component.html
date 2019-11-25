@@ -1,0 +1,297 @@
+<div id="content-wrapper">
+
+  <div class="container-fluid">
+
+    <!-- Breadcrumbs-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="#">Dasboard</a>
+      </li>
+      <li class="breadcrumb-item active">Report
+      </li>
+    </ol>
+
+    <!-- ERROR RESPONSE -->
+    <div *ngIf="errorResponse" class="alert alert-danger" role="alert">{{errorResponse.status + " : " + errorResponse.message}}</div>
+
+    <!-- SEARCH -->
+    <div class="card mb-3">
+      <div class="card-header">Report Search</div>
+      <div class="card-body">
+        <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="date" id="startDate" name="startDate" class="form-control" placeholder="Start Date"
+                    formControlName="startDate" required="required" autofocus="autofocus" value="2015-07-01">
+                  <label for="startDate">Start Date</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="date" id="endDate" name="endDate" class="form-control" placeholder="End Date"
+                    required="required" formControlName="endDate" value="2019-11-01">
+                  <label for="endDate">End Date</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="text" id="merchant" class="form-control" placeholder="Merchant"
+                    formControlName="merchant">
+                  <label for="merchant">Merchant</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-label-group">
+                  <input type="text" id="acquirer" class="form-control" placeholder="Acquirer"
+                    formControlName="acquirer">
+                  <label for="acquirer">Acquirer</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+    <!-- SEARCH -->
+
+    <div *ngIf="reportResponse">
+        <div *ngIf="reportResponse.status !== 'APPROVED'" class="alert alert-danger" role="alert">{{reportResponse.status}}</div>
+        <div *ngIf="reportResponse.status == 'APPROVED'" class="alert alert-success" role="alert">{{reportResponse.status}}</div>
+    </div>
+
+    <!-- DataTables -->
+    <div class="card mb-3" *ngIf="reportResponse">
+      <div class="card-header">
+        <i class="fas fa-table"></i> Search Results</div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Order</th>
+                <th scope="col">Count</th>
+                <th scope="col">Total</th>
+                <th scope="col">Currency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of reportResponse.response; let i = index" [attr.data-index]="i">
+                <th scope="row">{{i+1}}</th>
+                <th>{{row.count}}</th>
+                <td>{{row.total}}</td>
+                <td>{{row.currency}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="transactionResponse">
+      <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+
+            <ul class="nav nav-tabs nav-tab-modal" id="myTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="merchantInfo-tab" data-toggle="tab" href="#merchantInfo" role="tab"
+                  aria-controls="merchantInfo" aria-selected="true">Merchant Info</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="customerInfo-tab" data-toggle="tab" href="#customerInfo" role="tab"
+                  aria-controls="customerInfo" aria-selected="false">Customer Info</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="acquirerInfo-tab" data-toggle="tab" href="#acquirerInfo" role="tab"
+                  aria-controls="acquirerInfo" aria-selected="false">Acquirer Info</a>
+              </li>
+            </ul>
+
+            <div class="card mb-3">
+
+              <div class="tab-content" id="myTabContent" *ngIf="transactionResponse.data[modalIndex]">
+                <div class="tab-pane fade show active" id="merchantInfo" role="tabpanel"
+                  aria-labelledby="merchantInfo-tab">
+                  <br />
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info9">Merchant ID</label>
+                      <div class="form-control" id="info9">
+                        {{transactionResponse.data[modalIndex].merchant.id}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info10">Merchant Name</label>
+                      <div class="form-control" id="info10">
+                        {{transactionResponse.data[modalIndex].merchant.name}}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info1">Transaction ID</label>
+                      <div class="form-control" id="info1">
+                        {{transactionResponse.data[modalIndex].transaction.merchant.transactionId}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info2">Reference No</label>
+                      <div class="form-control" id="info2">
+                        {{transactionResponse.data[modalIndex].transaction.merchant.referenceNo}}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info3">Message</label>
+                      <div class="form-control" id="info3">
+                        {{transactionResponse.data[modalIndex].transaction.merchant.message}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info4">Created Date Time</label>
+                      <div class="form-control" id="info4">
+                        {{transactionResponse.data[modalIndex].transaction.merchant.created_at}}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info5">Operation</label>
+                      <div class="form-control" id="info5">
+                        {{transactionResponse.data[modalIndex].transaction.merchant.operation}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info6">Type</label>
+                      <div class="form-control" id="info6">
+                        {{transactionResponse.data[modalIndex].transaction.merchant.type}}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info7">Status</label>
+                      <div class="form-control" id="info7">
+                        {{transactionResponse.data[modalIndex].transaction.merchant.status}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info8">Custom Data</label>
+                      <div class="form-control" id="info8">
+                        {{transactionResponse.data[modalIndex].transaction.merchant.customData}}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info11">Code</label>
+                      <div class="form-control" id="info11">
+                        {{transactionResponse.data[modalIndex].ipn.merchant.code}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info12">Amount</label>
+                      <div class="form-control" id="info12">
+                        {{transactionResponse.data[modalIndex].ipn.merchant.amount}}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info13">Payment Type</label>
+                      <div class="form-control" id="info13">
+                        {{transactionResponse.data[modalIndex].ipn.merchant.paymentType}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info14">Currency</label>
+                      <div class="form-control" id="info14">
+                        {{transactionResponse.data[modalIndex].ipn.merchant.currency}}</div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="tab-pane fade" id="customerInfo" role="tabpanel" aria-labelledby="customerInfo-tab">
+
+                  <br />
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info17">First Name</label>
+                      <div class="form-control" id="info17">
+                        {{transactionResponse.data[modalIndex].customerInfo.billingFirstName}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info18">Last Name</label>
+                      <div class="form-control" id="info18">
+                        {{transactionResponse.data[modalIndex].customerInfo.billingLastName}}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info15">Customer Number</label>
+                      <div class="form-control" id="info15">
+                        {{transactionResponse.data[modalIndex].customerInfo.number}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info10">Customer Email</label>
+                      <div class="form-control" id="info10">
+                        {{transactionResponse.data[modalIndex].customerInfo.email}}</div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="tab-pane fade" id="acquirerInfo" role="tabpanel" aria-labelledby="acquirerInfo-tab">
+                  <br />
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info19">Acquirer ID</label>
+                      <div class="form-control" id="info19">
+                        {{transactionResponse.data[modalIndex].acquirer.id}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info20">Acquirer Name</label>
+                      <div class="form-control" id="info20">
+                        {{transactionResponse.data[modalIndex].acquirer.name}}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row col-auto">
+                    <div class="form-group col-md-6">
+                      <label for="info21">Acquirer Code</label>
+                      <div class="form-control" id="info21">
+                        {{transactionResponse.data[modalIndex].acquirer.code}}</div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="info22">Acquirer Type</label>
+                      <div class="form-control" id="info22">
+                        {{transactionResponse.data[modalIndex].acquirer.type}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /.container-fluid -->
+
+  <!-- Sticky Footer -->
+  <footer class="sticky-footer">
+    <div class="container my-auto">
+      <div class="copyright text-center my-auto">
+        <span>Copyright © Financial House 2019</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+<!-- /.content-wrapper -->
